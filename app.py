@@ -13,6 +13,8 @@ bucket = "mkw-bucket"
 
 st.header('Pro Mario Kart Wii Database')
 
+st.image('GSC.jpg')
+
 df = st.file_uploader(label= 'Upload File', type=['txt'])
 
 if df:
