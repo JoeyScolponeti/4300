@@ -351,3 +351,9 @@ def debug():
         print(player.race_scores)
 
 #debug()
+
+#with open ('GSCD1.txt', 'r', encoding='utf-8') as infile:
+
+    #string = infile.read().split('\n')
+    #matches, num = read(string)
+    #print(matches[0])

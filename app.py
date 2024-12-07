@@ -13,6 +13,6 @@ if df:
     file_bytes = df.read()
     file_data = file_bytes.decode("utf-8").split('\n')
     matches, num = read(file_data)
-    st.write(matches)
+    st.write(matches[0])
 
 
