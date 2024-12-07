@@ -20,14 +20,18 @@ if df:
     matches, num = read(file_data)
     st.write(matches[0])
 
-    new_file = file_data[0][15:17] + '.txt'
+    folder = file_data[0][16]
 
-    with open (new_file, 'w') as f:
-        for match in matches:
+    for match in matches:
+
+        new = file_data[0][15:20]
+        new_file = new + '.csv'
+
+        with open (new_file, 'w') as f:
             df = match.match_df()
-            f.write(df)
+            f.write(df.to_csv())
 
-    s3_client.upload_file(f, bucket, new_file)
+            s3_client.upload_file(f, bucket, folder + '/' + new_file)
 
 
 
