@@ -3,7 +3,7 @@ import json
 import pandas as pd
 
 
-def reconstruct(data):
+def reconstruct(file):
 
     place_to_point = {'1': 15,
                       '2': 12,
@@ -17,106 +17,110 @@ def reconstruct(data):
                       '10': 0,
                       '-1': -1}
 
-    row_num = 0
+    with open(file, 'r') as infile:
 
-    names = []
-    fcs = []
-    mii = []
-    tag = []
-    total = []
-    subbed_out = []
-    places = []
+        data = csv.reader(infile)
 
-    for row in data:
+        row_num = 0
 
-        row_num += 1
+        names = []
+        fcs = []
+        mii = []
+        tag = []
+        total = []
+        subbed_out = []
+        places = []
 
-        if row_num == 1:
-            title_str = row[0]
-        elif row_num == 2:
-            teams = [row[0]]
-            t1_pen = row[1]
-            t1_points = row[2]
-        elif row_num == 3:
-            teams.append(row[0])
-            t2_pen = row[1]
-            t2_points = row[2]
-        elif row_num == 5:
-            tracks = row[6:]
-        elif 5 < row_num < 16:
-            names.append(row[0])
-            fcs.append(row[1])
-            mii.append(row[2])
-            tag.append(row[3])
-            total.append(row[4])
-            subbed_out.append(row[5])
-            places.append(row[6:])
+        for row in data:
 
-    print(names)
+            row_num += 1
 
-    string = '{"title_str":"' + title_str
-    string += '","format":"5v5","races_played":12,'
-    string += f'"tracks":['
+            if row_num == 1:
+                title_str = row[0]
+            elif row_num == 2:
+                teams = [row[0]]
+                t1_pen = row[1]
+                t1_points = row[2]
+            elif row_num == 3:
+                teams.append(row[0])
+                t2_pen = row[1]
+                t2_points = row[2]
+            elif row_num == 5:
+                tracks = row[6:]
+            elif 5 < row_num < 16:
+                names.append(row[0])
+                fcs.append(row[1])
+                mii.append(row[2])
+                tag.append(row[3])
+                total.append(row[4])
+                subbed_out.append(row[5])
+                places.append(row[6:])
 
-    for track in tracks:
-        string += f'"{track}",'
+        print(names)
 
-    string = string[:-1]
-    string += ']'
+        string = '{"title_str":"' + title_str
+        string += '","format":"5v5","races_played":12,'
+        string += f'"tracks":['
 
-    string += ',"teams":'
-    string += '{"' + teams[0] + '":{"table_penalty_str":"' + t1_pen + '","total_score":' + t1_points + ','
-    string += '"players":{'
+        for track in tracks:
+            string += f'"{track}",'
 
-    print(teams[0])
-    for i in range(len(names[:5])):
+        string = string[:-1]
+        string += ']'
 
-        print(names[i])
-        sub_string = '"' + fcs[i] + '":{"mii_name":"' + mii[i] + '","lounge_name":"' + names[i] \
-                    + '","tag":"' + tag[i] + '","total_score":"' + total[i] + '","subbed_out":"' \
-                    + subbed_out[i] + '"'
+        string += ',"teams":'
+        string += '{"' + teams[0] + '":{"table_penalty_str":"' + t1_pen + '","total_score":' + t1_points + ','
+        string += '"players":{'
 
-        scores = []
-        for num in places[i]:
-            if num != '':
+        print(teams[0])
+        for i in range(len(names[:5])):
+
+            print(names[i])
+            sub_string = '"' + fcs[i] + '":{"mii_name":"' + mii[i] + '","lounge_name":"' + names[i] \
+                        + '","tag":"' + tag[i] + '","total_score":"' + total[i] + '","subbed_out":"' \
+                        + subbed_out[i] + '"'
+
+            scores = []
+            for num in places[i]:
+                if num != '':
+                    scores.append(place_to_point[num])
+                else:
+                    scores.append(-1)
+
+            sub_string += f',"race_scores":{scores},"race_positions":{[int(x) for x in places[i]]},'
+            sub_string += f'"gp_scores":{[scores[0:4], scores[4:8], scores[8:]]},"flag":"HELP"'
+            sub_string += '},'
+            string += sub_string
+
+        string = string[:-1]
+        string += '}},"' + teams[1] + '":{"table_penalty_str":"' + t2_pen + '","total_score":' + t2_points + ','
+        string += '"players":{'
+
+        print(teams[1])
+        for i in range(len(names[5:])):
+
+            i += 5
+
+            print(names[i])
+
+            sub_string = '"' + fcs[i] + '":{"mii_name":"' + mii[i] + '","lounge_name":"' + names[i] \
+                         + '","tag":"' + tag[i] + '","total_score":"' + total[i] + '","subbed_out":"' \
+                         + subbed_out[i] + '"'
+
+            scores = []
+            for num in places[i]:
                 scores.append(place_to_point[num])
-            else:
-                scores.append(-1)
 
-        sub_string += f',"race_scores":{scores},"race_positions":{[int(x) for x in places[i]]},'
-        sub_string += f'"gp_scores":{[scores[0:4], scores[4:8], scores[8:]]},"flag":"HELP"'
-        sub_string += '},'
-        string += sub_string
+            sub_string += f',"race_scores":{scores},"race_positions":{[int(x) for x in places[i]]},'
+            sub_string += f'"gp_scores":{[scores[0:4], scores[4:8], scores[8:]]},"flag":"HELP"'
+            sub_string += '},'
+            string += sub_string
 
-    string = string[:-1]
-    string += '}},"' + teams[1] + '":{"table_penalty_str":"' + t2_pen + '","total_score":' + t2_points + ','
-    string += '"players":{'
+        string = string[:-1]
+        string += '}}}}'
 
-    print(teams[1])
-    for i in range(len(names[5:])):
+        print(string)
 
-        i += 5
-
-        print(names[i])
-
-        sub_string = '"' + fcs[i] + '":{"mii_name":"' + mii[i] + '","lounge_name":"' + names[i] \
-                     + '","tag":"' + tag[i] + '","total_score":"' + total[i] + '","subbed_out":"' \
-                     + subbed_out[i] + '"'
-
-        scores = []
-        for num in places[i]:
-            scores.append(place_to_point[num])
-
-        sub_string += f',"race_scores":{scores},"race_positions":{[int(x) for x in places[i]]},'
-        sub_string += f'"gp_scores":{[scores[0:4], scores[4:8], scores[8:]]},"flag":"HELP"'
-        sub_string += '},'
-        string += sub_string
-
-    string = string[:-1]
-    string += '}}}}'
-
-    print(string)
-
-    return string
+        return string
 
 #j = reconstruct('D4_3C.csv')
