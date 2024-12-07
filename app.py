@@ -13,7 +13,7 @@ df = st.file_uploader(label= 'Upload File', type=['txt'])
 if df:
     file_bytes = df.read()
     file_data = file_bytes.decode("utf-8")
-    matches, num = read(df)
+    matches, num = read(file_data)
     st.write(matches)
 
 
