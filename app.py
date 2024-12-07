@@ -22,11 +22,7 @@ if df:
 
     new_file = matches[0].name
 
-    with open (new_file, 'w') as f:
-        for match in matches:
-            f.write(json.dumps(match))
-
-    s3_client.upload_file(f, bucket, new_file)
+    s3_client.upload_file(df, bucket, new_file)
 
 
 
