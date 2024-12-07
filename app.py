@@ -1,3 +1,4 @@
+import json
 import streamlit as st
 from MANUAL import reconstruct
 from MKTBAPI import read
@@ -23,7 +24,7 @@ if df:
 
     with open (new_file, 'w') as f:
         for match in matches:
-            f.write(match)
+            f.write(json.dumps(match))
 
     s3_client.upload_file(f, bucket, new_file)
 
