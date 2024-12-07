@@ -23,6 +23,7 @@ if df:
     folder = file_data[0][16]
 
     for match in matches:
+        print(len(matches))
 
         new = file_data[0][15:20]
         new_file = new + '.csv'
