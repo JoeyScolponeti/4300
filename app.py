@@ -33,9 +33,7 @@ if df:
 
         with open (new_file, 'w') as f:
             df = match.match_df().to_csv()
-
-            for row in df.itterows():
-                f.write(row)
+            f.write(df)
 
             s3_client.upload_file(new_file, bucket, new_file)
 
