@@ -123,5 +123,4 @@ def reconstruct(file):
 
         return string
 
-
-j = reconstruct('D4_3C.csv')
+#j = reconstruct('D4_3C.csv')
