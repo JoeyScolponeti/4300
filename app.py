@@ -5,6 +5,7 @@ from MKTBAPI import read
 import pandas as pd
 import csv
 import boto3
+import os
 
 s3_client = boto3.client('s3')
 
@@ -32,6 +33,8 @@ if df:
             f.write(df.to_csv())
 
             s3_client.upload_file(new_file, bucket, new_file)
+
+        os.remove(new_file)
 
 
 
