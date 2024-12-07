@@ -24,7 +24,7 @@ if df:
 
     for match in matches:
 
-        new = match.name
+        new = match.name.split(' ')[-1]
         new_file = new + '.csv'
 
         with open (new_file, 'w') as f:
