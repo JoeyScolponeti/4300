@@ -25,6 +25,7 @@ if df:
     with open (new_file, 'w') as f:
         for match in matches:
             df = match.match_df()
+            new_file.write(df)
 
     s3_client.upload_file(new_file, bucket, new_file)
 
