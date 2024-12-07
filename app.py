@@ -33,9 +33,6 @@ if df:
 
         with open (new_file, 'w') as f:
             df = match.match_df().to_csv(new_file)
-            print(df)
-            print(df.type)
-
             s3_client.upload_file(new_file, bucket, new_file)
 
 
