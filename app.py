@@ -25,7 +25,10 @@ if df:
 
     new_file = 'Season' + str(count)
 
-    s3_client.upload_file(df, bucket, new_file)
+    with open (new_file, 'w') as f:
+        f.write(file_data)
+
+    s3_client.upload_file(new_file + '.txt', bucket, new_file)
 
 
 
