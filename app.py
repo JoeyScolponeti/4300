@@ -23,13 +23,13 @@ if df:
     matches, num = read(file_data)
     st.write(matches[0])
 
-    new_file = 'Season' + str(count)
+    new_file = 'Season' + str(count) + '.txt'
 
     with open (new_file, 'w') as f:
         for match in file_data:
             f.write(match)
 
-    s3_client.upload_file(new_file + '.txt', bucket, new_file)
+    s3_client.upload_file(new_file, bucket, new_file)
 
 
 
