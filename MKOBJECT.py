@@ -351,7 +351,7 @@ class Match():
         print(self.name + ' ' + self.date)
         print(self.match_df())
 
-        return '\n'
+        return self.name + ' ' + self.date + '\n' + self.match_df().to_string()
 
     def small_print(self):
 
