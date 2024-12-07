@@ -104,140 +104,138 @@ def db_crucial(p_data, t_data):
     return df_player, df_team
 
 
-def read(file, num=0, manual=False):
+def read(infile, num=0, manual=False):
 
     if manual:
         print('MANUAL')
 
     matches = []
 
-    with open(file, 'r', encoding='utf-8') as infile:
+    while True:
 
-        while True:
+        string = infile.readline()
 
-            string = infile.readline()
+        if string == '':
+            break
 
-            if string == '':
-                break
+        else:
 
-            else:
+            num += 1
 
-                num += 1
+            dct = json.loads(string)
 
-                dct = json.loads(string)
+            print(dct)
 
-                print(dct)
+            tracks = dct['tracks']
 
-                tracks = dct['tracks']
+            for i in range(len(tracks)):
+                tracks[i] = TRACKS[tracks[i]]
 
-                for i in range(len(tracks)):
-                    tracks[i] = TRACKS[tracks[i]]
+            teams = dct['teams']
 
-                teams = dct['teams']
+            both = []
 
-                both = []
+            for key in teams:
 
-                for key in teams:
+                df = pd.DataFrame.from_dict(teams[key])
+                players = []
+                key_num = -1
 
-                    df = pd.DataFrame.from_dict(teams[key])
-                    players = []
-                    key_num = -1
+                for fc, entry in df['players'].items():
+                    key_num += 1
 
-                    for fc, entry in df['players'].items():
-                        key_num += 1
+                    if manual:
+                        k = -1
+                        for i in range(len(entry['gp_scores'])):
+                            for j in range(len(entry['gp_scores'][i])):
+                                k += 1
+                                entry['gp_scores'][i][j] = int(entry['gp_scores'][i][j])
+                                entry['race_scores'][k] = int(entry['race_scores'][k])
 
-                        if manual:
-                            k = -1
-                            for i in range(len(entry['gp_scores'])):
-                                for j in range(len(entry['gp_scores'][i])):
-                                    k += 1
-                                    entry['gp_scores'][i][j] = int(entry['gp_scores'][i][j])
-                                    entry['race_scores'][k] = int(entry['race_scores'][k])
+                        entry['total_score'] = int(entry['total_score'])
 
-                            entry['total_score'] = int(entry['total_score'])
+                    player = PlayerAPI(entry['lounge_name'],
+                                       sum(entry['gp_scores'][0]),
+                                       sum(entry['gp_scores'][1]),
+                                       sum(entry['gp_scores'][2]),
+                                       entry['total_score'],
+                                       fc,
+                                       entry['mii_name'],
+                                       entry['race_scores'],
+                                       entry['race_positions'],
+                                       entry['flag'],
+                                       team=key, num=num, sum=True)
 
-                        player = PlayerAPI(entry['lounge_name'],
-                                           sum(entry['gp_scores'][0]),
-                                           sum(entry['gp_scores'][1]),
-                                           sum(entry['gp_scores'][2]),
-                                           entry['total_score'],
-                                           fc,
-                                           entry['mii_name'],
-                                           entry['race_scores'],
-                                           entry['race_positions'],
-                                           entry['flag'],
-                                           team=key, num=num, sum=True)
+                    if entry['subbed_out'] and type(entry['subbed_out']) != str:
+                        player.sub_out = True
+                    elif entry['subbed_out'] == 'TRUE':
+                        player.sub_out = True
 
-                        if entry['subbed_out'] and type(entry['subbed_out']) != str:
-                            player.sub_out = True
-                        elif entry['subbed_out'] == 'TRUE':
-                            player.sub_out = True
+                    players.append(player)
 
-                        players.append(player)
+                gp1 = 0
+                gp2 = 0
+                gp3 = 0
 
-                    gp1 = 0
-                    gp2 = 0
-                    gp3 = 0
+                for p in players:
+                    gp1 += int(p.gp1)
+                    gp2 += int(p.gp2)
+                    gp3 += int(p.gp3)
 
-                    for p in players:
-                        gp1 += int(p.gp1)
-                        gp2 += int(p.gp2)
-                        gp3 += int(p.gp3)
-
-                    if key == '[L]':
-                        if 'D1' in dct['title_str']:
-                            name = '[L]1'
-                        else:
-                            name = '[L]2'
-
-                    elif key == 'HK':
-                        if 'D4' in dct['title_str']:
-                            name = 'HK1'
-                        else:
-                            name = 'HK2'
-
-                    elif key == '@NN':
-                        if 'D4' in dct['title_str']:
-                            name = '@NN1'
-                        else:
-                            name = '@NN2'
-
-                    elif key == 'Cγ':
-                        if 'D4' in dct['title_str']:
-                            name = 'Cγ1'
-                        else:
-                            name = 'Cγ2'
-
-                    elif key == 'Mt':
-                        name = 'Mt.'
+                if key == '[L]':
+                    if 'D1' in dct['title_str']:
+                        name = '[L]1'
                     else:
-                        name = key
+                        name = '[L]2'
 
-                    team = Team(name, gp1, gp2, gp3,
-                                teams[key]['table_penalty_str'],
-                                int(teams[key]['total_score']),
-                                players, num)
+                elif key == 'HK':
+                    if 'D4' in dct['title_str']:
+                        name = 'HK1'
+                    else:
+                        name = 'HK2'
 
-                    both.append(team)
+                elif key == '@NN':
+                    if 'D4' in dct['title_str']:
+                        name = '@NN1'
+                    else:
+                        name = '@NN2'
 
-                t1t = 'later'
-                t2t = 'bruh'
+                elif key == 'Cγ':
+                    if 'D4' in dct['title_str']:
+                        name = 'Cγ1'
+                    else:
+                        name = 'Cγ2'
 
-                match = MatchAPI('Index ' + str(num) + ' ' + dct['title_str'],
-                                 both[0],
-                                 both[1],
-                                 t1t,
-                                 t2t,
-                                 both[0].score,
-                                 both[1].score,
-                                 both[0].players + both[1].players,
-                                 both[0].score - both[1].score,
-                                 num,
-                                 tracks)
+                elif key == 'Mt':
+                    name = 'Mt.'
+                else:
+                    name = key
 
-                matches.append(match)
+                team = Team(name, gp1, gp2, gp3,
+                            teams[key]['table_penalty_str'],
+                            int(teams[key]['total_score']),
+                            players, num)
 
-        return matches, num
+                both.append(team)
+
+            t1t = 'later'
+            t2t = 'bruh'
+
+            match = MatchAPI('Index ' + str(num) + ' ' + dct['title_str'],
+                             both[0],
+                             both[1],
+                             t1t,
+                             t2t,
+                             both[0].score,
+                             both[1].score,
+                             both[0].players + both[1].players,
+                             both[0].score - both[1].score,
+                             num,
+                             tracks)
+
+            matches.append(match)
+
+    return matches, num
 
 
 def summarize(matches, df_player, df_team):
