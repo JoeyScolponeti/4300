@@ -19,6 +19,7 @@ if df:
     file_bytes = df.read()
     file_data = file_bytes.decode("utf-8").split('\n')
     matches, num = read(file_data)
+    st.write('Example CSV Output')
     st.write(matches[0])
 
     folder = file_data[0][16]
