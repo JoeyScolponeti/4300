@@ -420,14 +420,14 @@ class MatchAPI(Match):
                             mate.race_positions.count(-1) == 12:
                         if drop.race_positions != mate.race_positions:
 
-
+                            """
                             print(drop)
                             print('Subbed Out')
                             print(drop.race_scores)
                             print(mate)
                             print('Subbed In')
                             print(mate.race_scores)
-
+                            """
                             for i in range(len(drop.race_scores)):
                                 drop.race_scores[i] = place_to_point[drop.race_positions[i]]
 

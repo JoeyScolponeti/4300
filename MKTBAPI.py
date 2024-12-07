@@ -117,7 +117,7 @@ def read(infile, num=0, manual=False):
 
         dct = json.loads(string)
 
-        print(dct)
+        #print(dct)
 
         tracks = dct['tracks']
 
