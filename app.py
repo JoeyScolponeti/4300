@@ -14,16 +14,13 @@ st.header('Pro Mario Kart Wii Database')
 
 df = st.file_uploader(label= 'Upload File', type=['txt'])
 
-count = 0
-
 if df:
-    count += 1
     file_bytes = df.read()
     file_data = file_bytes.decode("utf-8").split('\n')
     matches, num = read(file_data)
     st.write(matches[0])
 
-    new_file = 'Season' + str(count) + '.txt'
+    new_file = file_data[0][15:16]
 
     with open (new_file, 'w') as f:
         for match in file_data:
