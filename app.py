@@ -26,7 +26,8 @@ if df:
     new_file = 'Season' + str(count)
 
     with open (new_file, 'w') as f:
-        f.write(file_data)
+        for match in file_data:
+            f.write(match)
 
     s3_client.upload_file(new_file + '.txt', bucket, new_file)
 
