@@ -23,7 +23,7 @@ if df:
     new_file = file_data[0][15:17]
 
     with open (new_file, 'w') as f:
-        for match in file_data:
+        for match in matches:
             df = match.match_df()
 
     s3_client.upload_file(new_file, bucket, new_file)
