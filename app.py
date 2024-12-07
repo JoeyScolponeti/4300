@@ -25,7 +25,7 @@ if df:
     for match in matches:
         print(len(matches))
 
-        new = file_data[0][15:20]
+        new = match.name
         new_file = new + '.csv'
 
         with open (new_file, 'w') as f:
