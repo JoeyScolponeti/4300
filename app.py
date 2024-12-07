@@ -31,7 +31,7 @@ if df:
             df = match.match_df()
             f.write(df.to_csv())
 
-            s3_client.upload_file(f, bucket, folder + '/' + new_file)
+            s3_client.upload_file(f, bucket, new_file)
 
 
 
