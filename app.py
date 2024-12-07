@@ -20,7 +20,7 @@ if df:
     matches, num = read(file_data)
     st.write(matches[0])
 
-    new_file = file_data[0][15:17]
+    new_file = file_data[0][15:17] + '.txt'
 
     with open (new_file, 'w') as f:
         for match in matches:
