@@ -8,7 +8,7 @@ import boto3
 
 s3_client = boto3.client('s3')
 
-bucket = "4300-final-bucket"
+bucket = "mkw-bucket"
 
 st.header('Pro Mario Kart Wii Database')
 
@@ -24,7 +24,7 @@ if df:
 
     with open (new_file, 'w') as f:
         for match in file_data:
-            f.write(match)
+            df = match.match_df()
 
     s3_client.upload_file(new_file, bucket, new_file)
 
